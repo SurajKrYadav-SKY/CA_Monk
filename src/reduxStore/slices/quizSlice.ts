@@ -18,8 +18,22 @@ const quizSlice = createSlice({
       state.questions = action.payload;
       state.userAnswers = Array(action.payload.length).fill([]);
     },
+    nextQuestion: (state) => {
+      if (state.currentQuestionIndex < state.questions.length - 1) {
+        state.currentQuestionIndex += 1;
+        state.timeLeft = 30;
+      } else {
+        state.isQuizComplete = true;
+      }
+    },
+    updateTimer: (state, action: PayloadAction<number>) => {
+      state.timeLeft = action.payload;
+      if (state.timeLeft <= 0) {
+        quizSlice.caseReducers.nextQuestion(state);
+      }
+    },
   }
 })
 
-export const {setQuestions} = quizSlice.actions;
+export const {setQuestions,nextQuestion, updateTimer} = quizSlice.actions;
 export default quizSlice.reducer;
