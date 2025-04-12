@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { QuizState } from "@/types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Question, QuizState } from "@/types";
 
 const initialState :  QuizState = {
   questions: [],
@@ -13,8 +13,13 @@ const initialState :  QuizState = {
 const quizSlice = createSlice({
   name: 'quiz',
   initialState,
-  reducers:{}
+  reducers:{
+    setQuestions: (state, action: PayloadAction<Question[]>) => {
+      state.questions = action.payload;
+      state.userAnswers = Array(action.payload.length).fill([]);
+    },
+  }
 })
 
-
+export const {setQuestions} = quizSlice.actions;
 export default quizSlice.reducer;
