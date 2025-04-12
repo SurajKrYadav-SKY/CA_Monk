@@ -18,6 +18,17 @@ const quizSlice = createSlice({
       state.questions = action.payload;
       state.userAnswers = Array(action.payload.length).fill([]);
     },
+    setUserAnswer: (state, action: PayloadAction<{ index: number; answer: string }>) => {
+      const { index, answer } = action.payload;
+      state.userAnswers[state.currentQuestionIndex] = [
+        ...state.userAnswers[state.currentQuestionIndex].slice(0, index),
+        answer,
+        ...state.userAnswers[state.currentQuestionIndex].slice(index + 1),
+      ];
+    },
+    clearUserAnswer: (state, action: PayloadAction<number>) => {
+      state.userAnswers[state.currentQuestionIndex][action.payload] = '';
+    },
     nextQuestion: (state) => {
       if (state.currentQuestionIndex < state.questions.length - 1) {
         state.currentQuestionIndex += 1;
@@ -35,5 +46,5 @@ const quizSlice = createSlice({
   }
 })
 
-export const {setQuestions,nextQuestion, updateTimer} = quizSlice.actions;
+export const {setQuestions,nextQuestion, updateTimer, setUserAnswer,clearUserAnswer} = quizSlice.actions;
 export default quizSlice.reducer;

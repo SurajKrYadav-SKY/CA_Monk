@@ -5,14 +5,15 @@ import { setQuestions } from "./reduxStore/slices/quizSlice";
 import { apiClient } from "./utils/apiClient";
 import { DATA_ROUTE } from "./utils/constants";
 import QuestionCard from "./components/QuestionCards/QuestionCard";
+import FeedbackScreen from "./components/FeedbackScreen/FeedbackScreen";
 import { RootState } from "./reduxStore/store";
 
 function App() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const currentQuestionIndex = useSelector(
-    (state: RootState) => state.quiz.currentQuestionIndex
+  const isQuizComplete = useSelector(
+    (state: RootState) => state.quiz.isQuizComplete
   );
 
   useEffect(() => {
@@ -36,13 +37,7 @@ function App() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Sentence Construction</h1>
-      <div className="progress-bar bg-gray-200 h-2 mb-4">
-        <div
-          className="bg-blue-500 h-2"
-          style={{ width: `${((currentQuestionIndex + 1) / 10) * 100}%` }}
-        ></div>
-      </div>
-      <QuestionCard />
+      {isQuizComplete ? <FeedbackScreen /> : <QuestionCard />}
     </div>
   );
 }
