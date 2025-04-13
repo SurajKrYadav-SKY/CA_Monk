@@ -1,20 +1,24 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setQuestions } from "./reduxStore/slices/quizSlice";
 import { apiClient } from "./utils/apiClient";
 import { DATA_ROUTE } from "./utils/constants";
 import QuestionCard from "./components/QuestionCards/QuestionCard";
 import FeedbackScreen from "./components/FeedbackScreen/FeedbackScreen";
-import { RootState } from "./reduxStore/store";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import Navbar from "./components/Navbar/Navbar";
+import Home from "./pages/Home/Home";
 
 function App() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const isQuizComplete = useSelector(
-    (state: RootState) => state.quiz.isQuizComplete
-  );
 
   useEffect(() => {
     apiClient
@@ -35,10 +39,24 @@ function App() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Sentence Construction</h1>
-      {isQuizComplete ? <FeedbackScreen /> : <QuestionCard />}
-    </div>
+    <Router>
+      <div className="container mx-auto m-0 p-0">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Navbar />
+                <Home />
+              </>
+            }
+          />
+          <Route path="/quiz" element={<QuestionCard />} />
+          <Route path="/feedback" element={<FeedbackScreen />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

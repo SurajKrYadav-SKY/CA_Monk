@@ -43,8 +43,14 @@ const quizSlice = createSlice({
         quizSlice.caseReducers.nextQuestion(state);
       }
     },
+    resetQuiz: (state) => {
+      state.currentQuestionIndex = 0;
+      state.userAnswers = Array(state.questions.length).fill([]);
+      state.timeLeft = 30;
+      state.isQuizComplete = false;
+    },
   }
 })
 
-export const {setQuestions,nextQuestion, updateTimer, setUserAnswer,clearUserAnswer} = quizSlice.actions;
+export const {setQuestions,nextQuestion, updateTimer, setUserAnswer,clearUserAnswer,resetQuiz} = quizSlice.actions;
 export default quizSlice.reducer;

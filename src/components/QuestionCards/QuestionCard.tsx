@@ -15,12 +15,18 @@ import {
   CardTitle,
 } from "../ui/card";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const QuestionCard = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { questions, currentQuestionIndex, userAnswers } = useSelector(
-    (state: RootState) => state.quiz
-  );
+  const {
+    questions,
+    currentQuestionIndex,
+    userAnswers,
+    isQuizComplete,
+    timeLeft,
+  } = useSelector((state: RootState) => state.quiz);
 
   // console.log("Questions:", questions);
   // console.log("Current Question Index:", currentQuestionIndex);
@@ -56,6 +62,21 @@ const QuestionCard = () => {
     );
     setAvailableOptions(remainingOptions);
   }, [userAnswers, currentQuestionIndex, question.options, blanks, dispatch]);
+
+  useEffect(() => {
+    if (
+      isQuizComplete ||
+      (timeLeft <= 0 && currentQuestionIndex === questions.length - 1)
+    ) {
+      navigate("/feedback");
+    }
+  }, [
+    isQuizComplete,
+    timeLeft,
+    currentQuestionIndex,
+    navigate,
+    questions.length,
+  ]);
 
   const handleDrop = (index: number, word: string) => {
     dispatch(setUserAnswer({ index, answer: word }));
