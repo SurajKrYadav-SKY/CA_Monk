@@ -5,18 +5,18 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { QUIZ_CONFIG } from "@/utils/config";
 
 const FeedbackScreen = () => {
   const navigate = useNavigate();
-  const { questions, userAnswers, isQuizComplete } = useSelector(
-    (state: RootState) => state.quiz
-  );
+  const { questions, userAnswers, isQuizComplete, totalQuestions } =
+    useSelector((state: RootState) => state.quiz);
   // Here calculating the score with 10 points per correct answer (max 100)
   const score = userAnswers.reduce(
     (acc, ans, idx) =>
       acc +
       (JSON.stringify(ans) === JSON.stringify(questions[idx].correctAnswer)
-        ? 10
+        ? QUIZ_CONFIG.pointsPerQuestion
         : 0),
     0
   );
@@ -26,7 +26,7 @@ const FeedbackScreen = () => {
   useEffect(() => {
     let start = 0;
     const end = score;
-    const duration = 2000;
+    const duration = QUIZ_CONFIG.scoreAnimationDuration;
     const stepTime = Math.abs(Math.floor(duration / end)) || 1;
     const timer = setInterval(() => {
       start += 1;
@@ -50,9 +50,9 @@ const FeedbackScreen = () => {
 
   // Feedback text based on score out of 100
   const feedbackText =
-    score >= 80
+    score >= QUIZ_CONFIG.feedbackThresholds.excellent
       ? "Great job! You performed exceptionally well."
-      : score >= 50
+      : score >= QUIZ_CONFIG.feedbackThresholds.good
       ? "Well done! There are a few areas where improvement is needed. Pay close attention to sentence structure and word placement to ensure clarity and correctness."
       : "Keep practicing! Review your responses below for more details.";
 
@@ -152,7 +152,7 @@ const FeedbackScreen = () => {
                   <div className="text-sm text-gray-500 mb-2 flex flex-row justify-between items-center">
                     <span className="bg-gray-300 px-1 rounded">Prompt</span>
                     <div>
-                      <strong>{idx + 1}</strong>/10
+                      <strong>{idx + 1}</strong>/{totalQuestions}
                     </div>
                   </div>
                   <p className="text-gray-800 mb-2">

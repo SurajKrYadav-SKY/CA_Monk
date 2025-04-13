@@ -22,6 +22,7 @@ const QuestionCard = () => {
   const dispatch = useDispatch();
   const {
     questions,
+    totalQuestions,
     currentQuestionIndex,
     userAnswers,
     isQuizComplete,
@@ -97,7 +98,7 @@ const QuestionCard = () => {
         <CardHeader className="border-b">
           <div className="flex justify-between items-center">
             <CardTitle className="text-lg font-bold sm:text-xl">
-              Question {currentQuestionIndex + 1}/10
+              Question {currentQuestionIndex + 1}/{totalQuestions}
             </CardTitle>
             <span className="text-sm text-gray-500 sm:text-base">
               <Timer />
@@ -109,7 +110,11 @@ const QuestionCard = () => {
           <div className="w-full bg-gray-200 h-1 mt-2">
             <div
               className="bg-yellow-500 h-1"
-              style={{ width: `${((currentQuestionIndex + 1) / 10) * 100}%` }}
+              style={{
+                width: `${
+                  ((currentQuestionIndex + 1) / totalQuestions) * 100
+                }%`,
+              }}
             ></div>
           </div>
         </CardHeader>

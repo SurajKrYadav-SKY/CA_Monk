@@ -26,7 +26,11 @@ function App() {
     const fetchData = async () => {
       try {
         const response = await apiClient.get(DATA_ROUTE);
-        dispatch(setQuestions(response.data.questions));
+        if (response.status === 200) {
+          dispatch(setQuestions(response.data.questions));
+        } else {
+          throw new Error("API returned unsuccessful status");
+        }
       } catch (error) {
         console.log("Unable to fetch the data", error);
         setError("Failed to load the data...");

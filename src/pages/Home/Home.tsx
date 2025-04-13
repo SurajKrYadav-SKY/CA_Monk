@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { RootState } from "@/reduxStore/store";
+import { QUIZ_CONFIG } from "@/utils/config";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { totalQuestions } = useSelector((state: RootState) => state.quiz);
 
   const handleStart = () => {
     navigate("/quiz");
@@ -22,15 +26,17 @@ const Home = () => {
       <div className="flex justify-between w-full max-w-md text-center text-sm text-gray-600 mb-8">
         <div>
           <p className="font-medium">Time Per Question</p>
-          <p>30 sec</p>
+          <p>{QUIZ_CONFIG.timePerQuestion} sec</p>
         </div>
         <div>
           <p className="font-medium">Total Questions</p>
-          <p>10</p>
+          <p>{totalQuestions || QUIZ_CONFIG.totalQuestions}</p>
         </div>
         <div>
           <p className="font-medium">Coins</p>
-          <p className="flex items-center justify-center">0</p>
+          <p className="flex items-center justify-center">
+            {QUIZ_CONFIG.initialCoins}
+          </p>
         </div>
       </div>
       <div className="flex gap-4">

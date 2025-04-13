@@ -9,6 +9,7 @@ export interface Question {
 
 export interface QuizState {
   questions: Question[];
+  totalQuestions: number,
   currentQuestionIndex: number;
   userAnswers: string[][];
   timeLeft: number;

@@ -3,6 +3,7 @@ import { Question, QuizState } from "@/types";
 
 const initialState :  QuizState = {
   questions: [],
+  totalQuestions: 0,
   currentQuestionIndex: 0,
   userAnswers: [],
   timeLeft: 30,
@@ -16,6 +17,7 @@ const quizSlice = createSlice({
   reducers:{
     setQuestions: (state, action: PayloadAction<Question[]>) => {
       state.questions = action.payload;
+      state.totalQuestions = action.payload.length;
       state.userAnswers = Array(action.payload.length).fill([]);
     },
     setUserAnswer: (state, action: PayloadAction<{ index: number; answer: string }>) => {
