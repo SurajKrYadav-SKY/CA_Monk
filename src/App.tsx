@@ -14,6 +14,8 @@ import {
 } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home/Home";
+import Loading from "./components/LoadingComponent/Loading";
+import FailedLoading from "./components/LoadingComponent/FailedLoading";
 
 function App() {
   const dispatch = useDispatch();
@@ -21,22 +23,32 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    apiClient
-      .get(DATA_ROUTE)
-      .then((response) => {
-        // console.log("Fetched data:", response.data);
+    const fetchData = async () => {
+      try {
+        const response = await apiClient.get(DATA_ROUTE);
         dispatch(setQuestions(response.data.questions));
+      } catch (error) {
+        console.log("Unable to fetch the data", error);
+        setError("Failed to load the data...");
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setError("Failed to load data");
-        setLoading(false);
-      });
+      }
+    };
+    fetchData();
   }, [dispatch]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading)
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  if (error)
+    return (
+      <>
+        <FailedLoading error={error} />
+      </>
+    );
 
   return (
     <Router>
