@@ -1,54 +1,180 @@
-# React + TypeScript + Vite
+# Sentence Construction web app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## A web-based quiz application built with React, Redux, TypeScript, and Tailwind CSS, designed to help пользователей improve their sentence construction skills by selecting the correct words to complete sentences. The app fetches questions from an API, allows users to answer interactively, tracks time and progress, and provides detailed feedback with scores and correct answers.
 
-Currently, two official plugins are available:
+## Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Features](#features)
+- [Technologies](#technologies)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **Interactive Quiz**: Users complete sentences by selecting words from provided options in the correct order.
+- **Timed Questions**: Each question has a time limit (default: 30 seconds), with automatic progression if time runs out.
+- **Progress Tracking**: A progress bar shows the user's advancement through the quiz.
+- **Quit Confirmation**: A modal confirms if the user wants to quit, preventing accidental exits.
+- **Feedback Screen**: Displays a dynamic score animation, overall performance feedback, and detailed question-by-question analysis.
+- **Responsive Design**: Optimized for mobile, tablet, and desktop using Tailwind CSS and shadcn components.
+- **Type Safety**: Built with TypeScript for robust type checking and maintainability.
+- **State Management**: Uses Redux Toolkit for efficient state handling (questions, answers, timer).
+- **Error Handling**: Gracefully handles API failures with loading and error states.
+- **Modular Architecture**: Components, utilities, and types are organized for scalability.
+
+---
+
+## Technologies
+
+- **Frontend**: React 18, TypeScript
+- **State Management**: Redux Toolkit
+- **Styling**: Tailwind CSS
+- **Routing**: React Router DOM
+- **Animations**: Framer Motion (for FeedbackScreen)
+- **API Client**: Custom `apiClient` (assumed Axios-based)
+- **Icons**: Lucide React
+- **UI Components**: `shadcn/ui` (assumed for Button, Card, Dialog)
+- **Build Tool**: Vite (assumed based on modern React setup)
+
+---
+
+## Installation
+
+Follow these steps to set up the project locally:
+
+### Prerequisites
+
+- **Node.js**: Version 18 or higher
+- **npm** or **yarn**: Package manager
+- **Git**: For cloning the repository
+
+### Steps
+
+1. **Clone the Repository**:
+
+   ```bash
+   git clone https://github.com/SurajKrYadav-SKY/CA_Monk
+   cd sentence-construction
+   ```
+
+2. **Install Dependencies**:
+   Using npm:
+
+   ```bash
+   npm install
+   ```
+
+   Or using yarn:
+
+   ```bash
+   yarn install
+   ```
+
+3. **Set Up Environment Variables**:
+   Create a `.env` file in the root directory and configure the API endpoint:
+
+   ```env
+   VITE_API_URL=https://your-api-endpoint.com
+   ```
+
+   Replace `https://your-api-endpoint.com` with the actual API URL for fetching quiz questions.
+
+4. **Run the Development Server**:
+   ```bash
+   npm run dev
+   ```
+   Or:
+   ```bash
+   yarn dev
+   ```
+   Open `http://localhost:5173` in your browser to view the app.
+
+---
+
+## Usage
+
+1. **Start the Quiz**:
+
+   - On the home page (`/`), click the "Start" button to navigate to the quiz (`/quiz`).
+   - The home page displays quiz details: time per question (30 seconds), total questions, and initial coins (if applicable).
+
+2. **Answer Questions**:
+
+   - In the quiz (`QuestionCard`):
+     - Select words from the option buttons to fill in the blanks in the correct order.
+     - Clear incorrect answers by clicking the filled blank.
+     - A timer counts down for each question.
+     - A progress bar shows your advancement.
+     - Click "Quit" to open a confirmation modal; confirm to return to the home page.
+     - Click "Next" to proceed to the next question (enabled when all blanks are filled).
+
+3. **View Feedback**:
+
+   - After completing the quiz or when time runs out, you're redirected to the feedback page (`/feedback`).
+   - View your score with a dynamic circular animation.
+   - Expand the feedback section to see detailed question-by-question analysis (correct vs. user answers).
+   - Click "Go to Dashboard" to return to the home page.
+
+4. **Error Handling**:
+   - If the API fails to load questions, a "Failed to load" message appears.
+   - Invalid routes redirect to the home page.
+
+---
+
+## Project Structure
+
+```plaintext
+src/
+├── components/
+│   ├── FeedbackScreen/
+│   │   ├── FeedbackScreen.tsx       # Displays quiz results and feedback
+│   │   ├── ScoreCircle.tsx          # Circular score visualization
+│   │   ├── QuestionFeedback.tsx     # Individual question feedback
+│   ├── QuestionCards/
+│   │   ├── QuestionCard.tsx         # Main quiz question component
+│   │   ├── QuestionDisplay.tsx      # Renders question text with blanks
+│   │   ├── OptionButton.tsx         # Option selection buttons
+│   │   ├── QuitConfirmationModal.tsx # Modal for quit confirmation
+│   ├── LoadingComponent/
+│   │   ├── Loading.tsx              # Loading spinner
+│   │   ├── FailedLoading.tsx        # Error display for failed API calls
+│   ├── Navbar/
+│   │   ├── Navbar.tsx               # Navigation bar
+│   ├── Timer/
+│   │   ├── Timer.tsx                # Countdown timer for questions
+│   ├── ui/
+│   │   ├── button.tsx               # Reusable button component
+│   │   ├── card.tsx                 # Reusable card component
+│   │   ├── dialog.tsx               # Reusable dialog component
+├── hooks/
+│   ├── useQuizLogic.ts              # Custom hook for quiz logic
+├── pages/
+│   ├── Home/
+│   │   ├── Home.tsx                 # Home page with quiz start button
+├── reduxStore/
+│   ├── slices/
+│   │   ├── quizSlice.ts             # Redux slice for quiz state
+│   ├── store.ts                     # Redux store configuration
+├── types/
+│   ├── quizTypes.ts                 # TypeScript interfaces for quiz
+├── utils/
+│   ├── apiClient.ts                 # API client for fetching questions
+│   ├── config.ts                    # Quiz configuration (e.g., QUIZ_CONFIG)
+│   ├── constants.ts                 # API routes and constants
+│   ├── quizUtils.ts                 # Utility functions for quiz logic
+├── App.tsx                          # Main app component with routing
+├── App.css                          # Global styles
+├── main.tsx                         # Entry point
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Components**: Modular, reusable UI components (e.g., `QuestionCard`, `FeedbackScreen`).
+- **Hooks**: Custom logic for quiz interactions (`useQuizLogic`).
+- **Pages**: Top-level views (e.g., `Home`).
+- **Redux**: Centralized state management for quiz data.
+- **Types**: TypeScript interfaces for type safety.
+- **Utils**: Configuration, API client, and helper functions.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+---

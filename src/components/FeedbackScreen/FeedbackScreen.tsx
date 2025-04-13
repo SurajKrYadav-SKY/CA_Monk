@@ -18,15 +18,7 @@ const FeedbackScreen = () => {
   const navigate = useNavigate();
   const { questions, userAnswers, isQuizComplete, totalQuestions } =
     useSelector((state: RootState) => state.quiz);
-  // // Here calculating the score with 10 points per correct answer (max 100)
-  // const score = userAnswers.reduce(
-  //   (acc, ans, idx) =>
-  //     acc +
-  //     (JSON.stringify(ans) === JSON.stringify(questions[idx].correctAnswer)
-  //       ? QUIZ_CONFIG.pointsPerQuestion
-  //       : 0),
-  //   0
-  // );
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [displayScore, setDisplayScore] = useState(0);
 
