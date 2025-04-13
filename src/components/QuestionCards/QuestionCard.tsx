@@ -2,11 +2,7 @@ import { RootState } from "@/reduxStore/store";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../ui/button";
 import Timer from "../Timer/Timer";
-import {
-  clearUserAnswer,
-  nextQuestion,
-  setUserAnswer,
-} from "@/reduxStore/slices/quizSlice";
+import { nextQuestion, resetQuiz } from "@/reduxStore/slices/quizSlice";
 import {
   Card,
   CardContent,
@@ -14,12 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuizLogic } from "@/hooks/useQuizLogic";
+import QuestionDisplay from "./QuestionDisplay";
+import OptionButton from "./OptionButton";
+import QuitConfirmationModal from "./QuitConfirmationModal";
 
 const QuestionCard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     questions,
     totalQuestions,
@@ -29,45 +30,20 @@ const QuestionCard = () => {
     timeLeft,
   } = useSelector((state: RootState) => state.quiz);
 
-  // console.log("Questions:", questions);
-  // console.log("Current Question Index:", currentQuestionIndex);
   const question = questions[currentQuestionIndex];
 
-  if (!question) return <div>Loading...</div>;
+  const { availableOptions, blanks, isNextEnabled, handleDrop, handleClear } =
+    useQuizLogic(question, currentQuestionIndex, userAnswers);
 
-  // console.log("Current Question:", question);
-  // console.log("Options:", question.options);
-
-  const blanks = question.question.split("_____________").length - 1; // _____________
-  const isNextEnabled =
-    userAnswers[currentQuestionIndex].filter(Boolean).length === blanks;
-
-  const [availableOptions, setAvailableOptions] = useState<string[]>(
-    question.options
+  const progressWidth = useMemo(
+    () => ((currentQuestionIndex + 1) / totalQuestions) * 100,
+    [currentQuestionIndex, totalQuestions]
   );
 
   useEffect(() => {
     if (
-      userAnswers[currentQuestionIndex].length !== blanks ||
-      userAnswers[currentQuestionIndex].some((ans) => ans === undefined)
-    ) {
-      const initialAnswers = Array(blanks).fill("");
-      initialAnswers.forEach((_, index) => {
-        dispatch(setUserAnswer({ index, answer: "" }));
-      });
-    }
-
-    const usedOptions = userAnswers[currentQuestionIndex].filter(Boolean);
-    const remainingOptions = question.options.filter(
-      (option) => !usedOptions.includes(option)
-    );
-    setAvailableOptions(remainingOptions);
-  }, [userAnswers, currentQuestionIndex, question.options, blanks, dispatch]);
-
-  useEffect(() => {
-    if (
       isQuizComplete ||
-      (timeLeft <= 0 && currentQuestionIndex === questions.length - 1)
+      (timeLeft <= 0 && currentQuestionIndex === totalQuestions - 1)
     ) {
       navigate("/feedback");
     }
@@ -75,46 +51,47 @@ const QuestionCard = () => {
     isQuizComplete,
     timeLeft,
     currentQuestionIndex,
+    totalQuestions,
     navigate,
-    questions.length,
   ]);
 
-  const handleDrop = (index: number, word: string) => {
-    dispatch(setUserAnswer({ index, answer: word }));
-    setAvailableOptions(availableOptions.filter((opt) => opt !== word));
+  const handleQuitConfirm = () => {
+    dispatch(resetQuiz());
+    navigate("/");
+    setIsModalOpen(false);
   };
 
-  const handleClear = (index: number) => {
-    const clearedWord = userAnswers[currentQuestionIndex][index];
-    dispatch(clearUserAnswer(index));
-    if (clearedWord) {
-      setAvailableOptions([...availableOptions, clearedWord]);
-    }
-  };
+  if (!question) {
+    return (
+      <div className="text-red-500 text-center" role="alert">
+        Error: Question not found
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md shadow-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl">
         <CardHeader className="border-b">
           <div className="flex justify-between items-center">
-            <CardTitle className="text-lg font-bold sm:text-xl">
+            <CardTitle className="text-lg font-semibold sm:text-xl">
               Question {currentQuestionIndex + 1}/{totalQuestions}
             </CardTitle>
             <span className="text-sm text-gray-500 sm:text-base">
               <Timer />
             </span>
-            <Button className="border border-gray-300 bg-transparent text-black-500 hover:bg-gray-200 cursor-pointer">
+            <Button
+              className="border border-gray-300 bg-transparent text-black-500 hover:bg-gray-200 cursor-pointer"
+              variant="outline"
+              onClick={() => setIsModalOpen(true)}
+            >
               Quit
             </Button>
           </div>
           <div className="w-full bg-gray-200 h-1 mt-2">
             <div
               className="bg-yellow-500 h-1"
-              style={{
-                width: `${
-                  ((currentQuestionIndex + 1) / totalQuestions) * 100
-                }%`,
-              }}
+              style={{ width: `${progressWidth}%` }}
             ></div>
           </div>
         </CardHeader>
@@ -122,30 +99,17 @@ const QuestionCard = () => {
           <p className="text-sm text-gray-600 mb-4 sm:text-base">
             Select the missing words in the correct order
           </p>
-          <p className="text-base sm:text-lg font-normal">
-            {question.question.split("_____________").map((part, i) => (
-              <span key={i} className="inline-block relative my-1">
-                {part}
-                {i < blanks && (
-                  <span className="inline-block relative mx-2">
-                    {userAnswers[currentQuestionIndex][i] && (
-                      <span
-                        onClick={() => handleClear(i)}
-                        className="absolute top-0 bg-transparent border border-gray-300 hover:bg-gray-100 rounded px-3 py-1 cursor-pointer"
-                      >
-                        {userAnswers[currentQuestionIndex][i]}
-                      </span>
-                    )}
-                    <span className="border-b border-gray-300 w-24 sm:w-32 h-6 block mt-4"></span>
-                  </span>
-                )}
-              </span>
-            ))}
-          </p>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-            {availableOptions.map((option, i) => (
-              <Button
-                key={i}
+          <QuestionDisplay
+            question={question.question}
+            userAnswers={userAnswers[currentQuestionIndex]}
+            blanks={blanks}
+            onClear={handleClear}
+          />
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 min-h-[120px] sm:min-h-[80px] md:min-h-[80px] justify-item-center md:justify-between">
+            {availableOptions.map((option) => (
+              <OptionButton
+                key={option}
+                option={option}
                 onClick={() => {
                   const emptyIndex =
                     userAnswers[currentQuestionIndex].indexOf("");
@@ -153,14 +117,11 @@ const QuestionCard = () => {
                     handleDrop(emptyIndex, option);
                   }
                 }}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
                 disabled={
                   userAnswers[currentQuestionIndex].filter(Boolean).length >=
                   blanks
                 }
-              >
-                {option}
-              </Button>
+              />
             ))}
           </div>
         </CardContent>
@@ -168,12 +129,17 @@ const QuestionCard = () => {
           <Button
             onClick={() => dispatch(nextQuestion())}
             disabled={!isNextEnabled}
-            className="bg-purple-500 hover:bg-purple-600 text-white"
+            className="bg-purple-500 hover:bg-purple-600 text-white cursor-pointer"
           >
             Next
           </Button>
         </CardFooter>
       </Card>
+      <QuitConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleQuitConfirm}
+      />
     </div>
   );
 };

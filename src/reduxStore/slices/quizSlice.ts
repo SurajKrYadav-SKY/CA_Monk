@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Question, QuizState } from "@/types";
+import { QUIZ_CONFIG } from "@/utils/config";
 
 const initialState :  QuizState = {
   questions: [],
   totalQuestions: 0,
   currentQuestionIndex: 0,
   userAnswers: [],
-  timeLeft: 30,
+  timeLeft: QUIZ_CONFIG.timePerQuestion || 30,
   isQuizComplete: false,
 }
 
@@ -18,7 +19,7 @@ const quizSlice = createSlice({
     setQuestions: (state, action: PayloadAction<Question[]>) => {
       state.questions = action.payload;
       state.totalQuestions = action.payload.length;
-      state.userAnswers = Array(action.payload.length).fill([]);
+      state.userAnswers = Array(action.payload.length).fill(null).map(()=>[]);
     },
     setUserAnswer: (state, action: PayloadAction<{ index: number; answer: string }>) => {
       const { index, answer } = action.payload;

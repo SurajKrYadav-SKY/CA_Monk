@@ -6,7 +6,8 @@ export const QUIZ_CONFIG = {
   quizTitle: "Sentence Construction",
   scoreAnimationDuration: 2000,
   feedbackThresholds: {
-    excellent: 80,
+    excellent: 100,
+    veryGood:80,
     good: 50,
   },
 };
