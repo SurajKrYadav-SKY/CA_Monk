@@ -42,7 +42,7 @@ const QuestionFeedback = ({
           </span>
         ))}
       </p>
-      <p className="text-lg font-medium mb-0 bg-gray-50 p-4">
+      <p className="text-lg font-medium mb-0 bg-gray-100 p-4">
         <span className="text-gray-500">Your response:</span>{" "}
         <span
           className={
@@ -54,7 +54,7 @@ const QuestionFeedback = ({
           {isCorrect ? "Correct" : "Incorrect"}
         </span>
       </p>
-      <p className="text-gray-700 bg-gray-50 p-4">
+      <p className="text-gray-700 bg-gray-100 p-4">
         {question.question.split("_____________").map((part, i) => (
           <span key={i}>
             {part}

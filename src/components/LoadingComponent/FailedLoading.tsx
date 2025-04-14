@@ -15,6 +15,10 @@ const FailedLoading: React.FC<FailedLoadingProps> = ({ error }) => {
         <p className="text-sm text-red-600 mb-4">
           {error || "We couldn't load the data. Please try again."}
         </p>
+        <p className="text-sm text-red-600 mb-4">
+          Please setup your db.json server. Follow the instructions in the
+          README.md
+        </p>
         <button
           onClick={() => window.location.reload()}
           className="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition"
