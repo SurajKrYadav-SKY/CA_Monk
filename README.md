@@ -1,5 +1,7 @@
 # Sentence Construction
 
+# Sentence Construction
+
 #### A web-based quiz application built with React, Redux, TypeScript, and Tailwind CSS, designed to help improve their sentence construction skills by selecting the correct words to complete sentences. The app fetches questions from an API which is setup using JSON Server, allows users to answer interactively, tracks time and progress, and provides detailed feedback with scores and correct answers.
 
 ## Table of Contents
@@ -7,6 +9,7 @@
 - [Features](#features)
 - [Technologies](#technologies)
 - [Installation](#installation)
+- [Setting Up JSON Server](#setting-up-json-server)
 - [Setting Up JSON Server](#setting-up-json-server)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
@@ -79,6 +82,7 @@ Follow these steps to set up the project locally:
 
    ```env
    VITE_SERVER_URL=https://your-api-endpoint.com
+   VITE_SERVER_URL=https://your-api-endpoint.com
    ```
 
    Replace `https://your-api-endpoint.com` with the actual API URL for fetching quiz questions.
@@ -92,6 +96,59 @@ Follow these steps to set up the project locally:
    yarn dev
    ```
    Open `http://localhost:5173` in your browser to view the app.
+
+---
+
+## Setting Up JSON Server
+
+This project uses **JSON Server** to provide a mock REST API for quiz questions. Follow these steps to set it up:
+
+### Prerequisites
+
+- **Node.js**: Version 12 or higher
+- **npm**: Version 6 or higher
+  Verify installation:
+  ```bash
+  node -v
+  npm -v
+  ```
+
+### Steps
+
+1. **Install JSON Server**:
+   Install globally:
+
+   ```bash
+   npm install -g json-server
+   ```
+
+   Or locally in the project:
+
+   ```bash
+   npm install json-server --save-dev
+   ```
+
+2. **Create a JSON File**:
+   In the project root, create a file named `db.json`:
+
+   ```bash
+   touch db.json
+   ```
+
+3. **Define Your Data**:
+   Copy the sample quiz data from [this link](https://github.com/yghugardare/Sample/blob/main/sample.json) into `db.json`.
+
+4. **Start the JSON Server**:
+   Run the following command:
+
+   ```bash
+   npx json-server --watch db.json --port 3000
+   ```
+
+   This serves the API at `http://localhost:3000`. Ensure `VITE_SERVER_URL` in `.env` matches this endpoint.
+
+5. **Stop the Server**:
+   Press `Ctrl + C` in the terminal to stop the server.
 
 ---
 
